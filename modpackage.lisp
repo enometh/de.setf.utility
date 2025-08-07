@@ -521,6 +521,7 @@
     (edit-package (find-package designator)))
   (:method ((package package))
     ;; perform indirectly in case the operators are not loaded
+   #+asdf
     (asdf:operate 'asdf::edit-op (package-name package))))
   
 
