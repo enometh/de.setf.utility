@@ -1,0 +1,273 @@
+;;; -*- Mode: LISP; Package: :cl-user; BASE: 10; Syntax: ANSI-Common-Lisp; -*-
+;;;
+;;;   Time-stamp: <>
+;;;   Touched: Thu Aug 07 10:41:55 2025 +0530 <enometh@net.meer>
+;;;   Bugs-To: enometh@net.meer
+;;;   Status: Experimental.  Do not redistribute
+;;;   Copyright (C) 2025 Madhu.  All Rights Reserved.
+;;;
+(in-package "CL-USER")
+(defvar *de.setf.utility-source-dir*
+  (merge-pathnames "Github/de.setf.utility/"
+		   (translate-logical-pathname "EXTERN:")))
+
+(defvar *de.setf.utility-binary-dir*
+  (binary-directory *de.setf.utility-source-dir*))
+
+(mk:defsystem :de.setf.utility.codecs.test
+  :source-pathname *de.setf.utility-source-dir*
+  :binary-pathname *de.setf.utility-binary-dir*
+  :source-extension "lisp"
+  :depends-on (:de.setf.utility.codecs
+	       :de.setf.utility.test)
+  :components ((:module "codecs"
+		:components ((:module "test"
+			      :components ((:file "types")
+					   (:file "utilities")
+					   (:file "vector-stream")
+					   (:file "byte-codecs")
+					   (:file "character-codecs")
+					   (:file "float-codecs")))))))
+
+#+nil
+(mk:oos :de.setf.utility.codecs.test :load :compile-during-load t)
+
+(mk:defsystem :de.setf.utility.codecs.bert
+  :source-pathname *de.setf.utility-source-dir*
+  :binary-pathname *de.setf.utility-binary-dir*
+  :source-extension "lisp"
+  :depends-on (:de.setf.utility.codecs)
+  :components ((:module "codecs"
+		:components ((:module "bert"
+			      :components ((:file "bert")))))))
+
+#+nil
+(mk:oos :de.setf.utility.codecs.bert :load :compile-during-load t)
+
+(mk:defsystem :de.setf.utility.test.rspec
+  :source-pathname *de.setf.utility-source-dir*
+  :binary-pathname *de.setf.utility-binary-dir*
+  :source-extension "lisp"
+  :depends-on (:de.setf.utility.test
+	       :de.setf.utility.codecs.etf)
+  :components ((:module "test"
+		:components ((:module "rspec"
+			      :components ((:file "package")
+					   (:file "rspec")))))))
+
+#+nil
+(mk:oos :de.setf.utility.test.rspec :load :compile-during-load t)
+
+(mk:defsystem :de.setf.utility.codecs.etf
+  :source-pathname *de.setf.utility-source-dir*
+  :binary-pathname *de.setf.utility-binary-dir*
+  :source-extension "lisp"
+  :depends-on (:de.setf.utility.codecs)
+  :components ((:module "codecs"
+		:components ((:module "etf"
+			      :components ((:file "package")
+					   (:file "etf")))))))
+
+#+nil
+(mk:oos :de.setf.utility.codecs.etf :load :compile-during-load t)
+
+(mk:defsystem :de.setf.utility.test.test
+  :source-pathname *de.setf.utility-source-dir*
+  :binary-pathname *de.setf.utility-binary-dir*
+  :source-extension "lisp"
+  :depends-on (:de.setf.utility.test)
+  :components ((:module "test"
+		:components ((:module "test"
+			      :components ((:file "test-unit")
+					   (:file "monitor")))))))
+
+#+nil
+(mk:oos :de.setf.utility.test.test :load :compile-during-load t)
+
+(mk:defsystem :de.setf.utility.dot.test
+  :source-pathname *de.setf.utility-source-dir*
+  :binary-pathname *de.setf.utility-binary-dir*
+  :source-extension "lisp"
+  :depends-on (:de.setf.utility.dot)
+  :components ((:module "dot"
+		:components ((:module "tests"
+			      :components ((:file "dot")))))))
+
+#+nil
+(mk:oos :de.setf.utility.dot.test :load :compile-during-load t)
+
+(mk:defsystem :de.setf.utility.walker
+  :source-pathname *de.setf.utility-source-dir*
+  :binary-pathname *de.setf.utility-binary-dir*
+  :source-extension "lisp"
+  :depends-on (:de.setf.utility.dot
+	       :de.setf.utility.clos
+	       :closer-mop)
+  :components ((:module "walker"
+		:components ((:file "package")
+			     (:file "parameters")
+			     (:file "introspection")
+			     (:file "walker")
+			     (:file "introspective-walker")
+			     (:file "source-walker")
+			     (:file "class-graph")
+			     (:file "function-graph")
+			     (:file "package-graph")))))
+
+#+nil
+(mk:oos :de.setf.utility.walker :load :compile-during-load t)
+
+(mk:defsystem :de.setf.utility.codecs
+  :source-pathname *de.setf.utility-source-dir*
+  :binary-pathname *de.setf.utility-binary-dir*
+  :source-extension "lisp"
+  :depends-on (:de.setf.utility.mime)
+  :components ((:module "codecs"
+		:components ((:file "package")
+			     (:file "types")
+			     (:file "utilities")
+			     (:file "byte-codecs")
+			     (:file "character-codecs")
+			     (:file "float-codecs")
+			     (:file "vector-stream")
+			     (:module "meta"
+			      :components (:SERIAL
+					   (:file "meta")
+					   (:file "float")))))))
+
+#+nil
+(mk:oos :de.setf.utility.codecs :load :compile-during-load t)
+
+(mk:defsystem :de.setf.utility.graph
+  :source-pathname *de.setf.utility-source-dir*
+  :binary-pathname *de.setf.utility-binary-dir*
+  :source-extension "lisp"
+  :depends-on (:de.setf.utility.clos)
+  :components ((:module "graph"
+		:components ((:file "package")
+			     (:file "classes"
+			      :depends-on ("package"))
+			     (:file "walk"
+			      :depends-on ("classes"))
+			     (:file "generate"
+			      :depends-on ("walk"))))))
+
+#+nil
+(mk:oos :de.setf.utility.graph :load :compile-during-load t)
+
+(mk:defsystem :de.setf.utility.test
+  :source-pathname *de.setf.utility-source-dir*
+  :binary-pathname *de.setf.utility-binary-dir*
+  :source-extension "lisp"
+  :depends-on (:de.setf.utility.dot
+	       :de.setf.utility.walker
+	       :de.setf.utility.mime)
+  :components ((:module "test"
+		:components ((:file "package")
+			     (:file "test-unit")
+			     (:file "monitor")
+			     (:file "profiler")))))
+
+#+nil
+(mk:oos :de.setf.utility.test :load :compile-during-load t)
+
+(mk:defsystem :de.setf.utility.mime
+  :source-pathname *de.setf.utility-source-dir*
+  :binary-pathname *de.setf.utility-binary-dir*
+  :source-extension "lisp"
+  :depends-on (:de.setf.utility
+	       :closer-mop)
+  :components ((:module "mime"
+		:components ((:file "package")
+			     (:file "mime")
+			     (:file "content-encoding")))))
+
+#+nil
+(mk:oos :de.setf.utility.mime :load :compile-during-load t)
+
+(mk:defsystem :de.setf.utility.clos
+  :source-pathname *de.setf.utility-source-dir*
+  :binary-pathname *de.setf.utility-binary-dir*
+  :source-extension "lisp"
+  :depends-on (:de.setf.utility)
+  :components ((:module "clos"
+		:components ((:file "package")
+			     (:file "clos-classes"
+			      :depends-on ("package"))
+			     (:file "clos-methods"
+			      :depends-on ("package"))
+			     (:file "clone-instance"
+			      :depends-on ("package"))
+			     (:file "denominated"
+			      :depends-on ("package"))
+			     (:file "print-object-slots"
+			      :depends-on ("package"))))))
+
+#+nil
+(mk:oos :de.setf.utility.clos :load :compile-during-load t)
+
+(mk:defsystem :de.setf.utility.asdf
+  :source-pathname *de.setf.utility-source-dir*
+  :binary-pathname *de.setf.utility-binary-dir*
+  :source-extension "lisp"
+  :depends-on (:de.setf.utility.dot
+	       :de.setf.utility.walker)
+  :components ((:module "asdf"
+		:components ((:file "patches")
+			     (:file "operators")
+			     (:file "hierarchical-names")
+			     (:file "contingent-on")
+			     (:file "dependency")
+			     (:file "graph")))))
+
+#+nil
+(mk:oos :de.setf.utility.asdf :load :compile-during-load t)
+
+(mk:defsystem :de.setf.utility.dot
+  :source-pathname *de.setf.utility-source-dir*
+  :binary-pathname *de.setf.utility-binary-dir*
+  :source-extension "lisp"
+  :depends-on (:de.setf.utility)
+  :components ((:module "dot"
+		:components ((:file "package")
+			     (:file "dot")))))
+
+#+nil
+(mk:oos :de.setf.utility.dot :load :compile-during-load t)
+
+(mk:defsystem :de.setf.utility.bsd
+  :source-pathname *de.setf.utility-source-dir*
+  :binary-pathname *de.setf.utility-binary-dir*
+  :source-extension "lisp"
+  :components ((:module "bsd"
+		:components ((:file "bsd")))))
+
+#+nil
+(mk:oos :de.setf.utility.bsd :load :compile-during-load t)
+
+(mk:defsystem :de.setf.utility
+  :source-pathname *de.setf.utility-source-dir*
+  :binary-pathname *de.setf.utility-binary-dir*
+  :source-extension "lisp"
+  :components ((:file "package")
+	       (:file "pathnames")
+	       (:file "modpackage")
+	       (:file "documentation-stub"
+		:depends-on ("modpackage"))
+	       (:file "string")
+	       (:file "conditions")
+	       (:module "clos"
+		:depends-on ("string")
+		:components ((:file "clos-classes")))
+	       (:module "test"
+		:components ((:file "package")
+			     (:file "test-unit"
+			      :depends-on ("package"))))
+	       (:file "date"
+		:depends-on ("modpackage"))
+	       (:file "list"
+		:depends-on ("modpackage"))))
+
+#+nil
+(mk:oos :de.setf.utility :load :compile-during-load t)
+
