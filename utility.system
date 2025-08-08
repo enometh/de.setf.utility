@@ -138,6 +138,18 @@
 #+nil
 (mk:oos :de.setf.utility.codecs :load :compile-during-load t)
 
+;madhu 250809
+(mk:defsystem :de.setf.utility.bt-lock
+  :source-pathname *de.setf.utility-source-dir*
+  :binary-pathname *de.setf.utility-binary-dir*
+  :depends-on (:de.setf.utility.mime "bordeaux-threads")
+  :source-extension "lisp"
+  :components ((:file "bt-lock")))
+
+
+#+nil
+(mk:oos :de.setf.utility.bt-lock :load :compile-during-load t)
+
 (mk:defsystem :de.setf.utility.graph
   :source-pathname *de.setf.utility-source-dir*
   :binary-pathname *de.setf.utility-binary-dir*
@@ -189,7 +201,8 @@
   :source-pathname *de.setf.utility-source-dir*
   :binary-pathname *de.setf.utility-binary-dir*
   :source-extension "lisp"
-  :depends-on (:de.setf.utility)
+  :depends-on (:de.setf.utility
+	       "bordeaux-threads")
   :components ((:module "clos"
 		:components ((:file "package")
 			     (:file "clos-classes"

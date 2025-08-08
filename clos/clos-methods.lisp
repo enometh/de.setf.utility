@@ -415,10 +415,11 @@ methods, which it removes from the effective method."))
   (with-slots (function-lock) instance
     (unless (slot-boundp instance 'function-lock)
       (setf function-lock
-            #+allegro (mp:make-process-lock :name (generic-function-name instance))
-            #+(or clozure digitool) (ccl::make-lock (generic-function-name instance))
-            #+lispworks (mp:make-lock :name (generic-function-name instance))
-            #+sbcl (sb-thread:make-mutex :name (generic-function-name instance))
+	    (bordeaux-threads:make-lock (generic-function-name instance))
+;;;            #+allegro (mp:make-process-lock :name (generic-function-name instance))
+;;;            #+(or clozure digitool) (ccl::make-lock (generic-function-name instance))
+;;;            #+lispworks (mp:make-lock :name (generic-function-name instance))
+;;;            #+sbcl (sb-thread:make-mutex :name (generic-function-name instance))
             ))))
 
 
@@ -445,10 +446,11 @@ methods, which it removes from the effective method."))
               `(call-method ,(first around)
                             (,@(rest around)
                              (make-method ,form)))))
-      `(#+(or digitool clozure) with-lock-grabbed
-        #+allegro mp:with-process-lock
-        #+lispworks mp:with-lock
-        #+sbcl sb-thread:with-mutex
+      `(bordeaux-threads:with-lock-held
+;;;    #+(or digitool clozure) with-lock-grabbed
+;;;	    #+allegro mp:with-process-lock
+;;;        #+lispworks mp:with-lock
+;;;        #+sbcl sb-thread:with-mutex
         (,(function-lock function))
          ,form))))
 
@@ -463,10 +465,12 @@ methods, which it removes from the effective method."))
   (unless lock-designator (setf lock-designator (generic-function-name function)))
   (setf lock-designator (or (get lock-designator 'named-locked-standard-lock)
                             (setf (get lock-designator 'named-locked-standard-lock)
-                                  #+allegro (mp:make-process-lock :name (string lock-designator))
-                                  #+(or clozure digitool) (ccl::make-lock (string lock-designator))
-                                  #+lispworks (mp:make-lock :name (string lock-designator))
-                                  #+sbcl (sb-thread:make-mutex :name (string lock-designator)))))
+				  (bordeaux-threads:make-lock :name  (string lock-designator))
+;;;                                  #+allegro (mp:make-process-lock :name (string lock-designator))
+;;;                                  #+(or clozure digitool) (ccl::make-lock (string lock-designator))
+;;;                                  #+lispworks (mp:make-lock :name (string lock-designator))
+;;;                                  #+sbcl (sb-thread:make-mutex :name (string lock-designator))
+				  )))
   (flet ((call-methods (methods)
            (mapcar #'(lambda (method)
                        `(call-method ,method ()))
@@ -483,10 +487,11 @@ methods, which it removes from the effective method."))
               `(call-method ,(first around)
                             (,@(rest around)
                              (make-method ,form)))))
-      `(#+allegro mp:with-process-lock
-        #+(or clozure digitool) ccl:with-lock-grabbed
-        #+lispworks mp:with-lock
-        #+sbcl sb-thread:with-mutex
+      `(bordeaux-threads:with-lock-held
+;;;	#+allegro mp:with-process-lock
+;;;        #+(or clozure digitool) ccl:with-lock-grabbed
+;;;        #+lispworks mp:with-lock
+;;        #+sbcl sb-thread:with-mutex
         (,lock-designator)
          ,form))))
 
