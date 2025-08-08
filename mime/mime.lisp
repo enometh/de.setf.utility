@@ -423,6 +423,18 @@
   ;; ignore everything
   )
 
+(defun massage-parameters (parameters slot-definitions initargs)
+  (loop for (attribute value) on parameters by #'cddr
+        do (setf attribute (etypecase attribute
+                             (keyword attribute)
+                             ((or symbol string) (cons-symbol :keyword (string-trim #(#\space #\tab) attribute))))
+                 value (canonicalize-media-type-parameter attribute (string-trim #(#\space #\tab) value)))
+        append (list attribute value)
+        when (and (eq (getf initargs attribute attribute) attribute)
+                  (loop for sd in slot-definitions
+                        when (find attribute (c2mop:slot-definition-initargs sd))
+                        return t))
+        do (setf initargs (list* attribute value initargs))))
 
 (defmethod initialize-instance :around ((instance mime-type) &rest initargs
                                         &key parameters)
@@ -432,20 +444,11 @@
    any parameters which are know initargs are added to the initarg list."
   (declare (dynamic-extent initargs))
   (if parameters
-      (let ((slot-definitions (c2mop:class-slots (class-of instance))))
+      (let* ((slot-definitions (c2mop:class-slots (class-of instance)))
+	    (parameters (massage-parameters parameters slot-definitions initargs)))
         (apply #'call-next-method instance
-               :parameters (loop for (attribute value) on parameters by #'cddr
-                             do (setf attribute (etypecase attribute
-                                                  (keyword attribute)
-                                                  ((or symbol string) (cons-symbol :keyword (string-trim #(#\space #\tab) attribute))))
-                                      value (canonicalize-media-type-parameter attribute (string-trim #(#\space #\tab) value)))
-                             append (list attribute value)
-                             when (and (eq (getf initargs attribute attribute) attribute)
-                                       (loop for sd in slot-definitions
-                                         when (find attribute (c2mop:slot-definition-initargs sd))
-                                         return t))
-                             do (setf initargs (list* attribute value initargs)))
-               initargs))
+               :parameters parameters
+               (append initargs parameters)))
       (call-next-method)))
 
 
@@ -531,8 +534,10 @@
       (setf parameters (loop for parameter in parameters
                          append (destructuring-bind (attribute value) (split-string parameter "=")
                                   ;; ensure exactly two constituents
-                                  (list attribute value))))
-      (destructuring-bind (&key profile &allow-other-keys) parameters
+                                  (list
+				   attribute
+				   value))))
+      (let ((profile (getf parameters :profile)))
         (when idne-s
           (setf args (plist-difference args '(:if-does-not-exist))))
         (let ((mime-type-symbol (intern-mime-type-key type-name :if-does-not-exist if-does-not-exist)))
@@ -697,3 +702,25 @@
 
 :mime
 
+#+nil
+(mime-type '"text/html;q=.1")
+#+nil
+(canonicalize-media-type-parameter "q" "1.0")
+#+nil
+(canonicalize-media-type-parameter "q" ".1")
+#+nil
+(intern-mime-type-key "q")
+#+nil
+(user::lc "~/cl/package-funcs.l")
+#+nil
+(my-package-funcs:package-symbols  *mime-type-package*)
+
+#+nil
+(split-string "text/html;q=.1" ";")
+
+#+nil
+(massage-parameters '("q" ".1") #+nil (destructuring-bind (k v)  (split-string "q=.1" "=")
+				  (list (intern (string-upcase k) :keyword)
+					v))
+		    (c2mop:class-slots(find-class 'mime:text/html))
+		    '(:foo 'foo :var 'var))
