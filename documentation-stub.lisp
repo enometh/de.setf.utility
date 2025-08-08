@@ -45,3 +45,7 @@
   `(eval-when (:compile-toplevel :load-toplevel :execute)
      (unless (test-features ',features)
        (cerror "Continue anyway." ,message ,@args))))
+
+(defmacro document (&rest arguments)
+  (declare (ignore arguments))
+  (values))

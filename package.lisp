@@ -77,3 +77,7 @@
 
 
 (pushnew :de.setf.utility *features*)
+
+
+(import '(de.setf.utility.implementation::document) 'de.setf.utility)
+(export '(de.setf.utility.implementation::document) 'de.setf.utility)
