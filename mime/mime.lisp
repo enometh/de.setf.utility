@@ -370,6 +370,7 @@
 
 (defgeneric cl-user::format-mime-type-parameter (stream value colon at name)
   (:method (stream (value null) (colon t) (at t) (name t))
+   (declare (ignore stream))
     ;; do nothing
     )
   (:method (stream (value t) (colon t) (at t) (name (eql :quality)))
@@ -676,6 +677,7 @@
          :profile profile
          args))
 
+#+nil
 (defmethod initialize-clone ((old mime-type-profile) (new mime-type-profile) &rest args
                              &key (profile (slot-value old 'profile)))
   (apply #'call-next-method old new
