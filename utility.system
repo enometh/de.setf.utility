@@ -129,7 +129,7 @@
 			     (:file "byte-codecs")
 			     (:file "character-codecs")
 			     (:file "float-codecs")
-			     (:file "vector-stream")
+			     (:file "vector-stream" :if-feature (:not :clozure))
 			     (:module "meta"
 			      :components (:SERIAL
 					   (:file "meta")

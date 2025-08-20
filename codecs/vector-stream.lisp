@@ -22,6 +22,9 @@
  Adapted from the cl-xml version to default i/o to unsigned byte operations, but allow signed streams
  as, eg. specified for thrift."))
 
+#+clozure
+(eval-when (load eval compile)
+  (error "use ccl::vector-stream"))
 
 (defparameter *vector-stream-element-type* '(unsigned-byte 8))
 
@@ -42,7 +45,8 @@
     :accessor stream-force-output-hook
     :documentation "A function of one argument, the stream, called as the
      base implementation of stream-force-output.")
-   #+(or CMU sbcl lispworks) (direction :initarg :direction)
+   #|#+(or CMU sbcl lispworks)|#  (direction :initarg :direction)
+   (element-type :initarg :element-type :initform *vector-stream-element-type*)
    )
   (:default-initargs
     :element-type *vector-stream-element-type*))
@@ -353,3 +357,14 @@
       (etypecase vector
         (simple-vector #'simple-vector-writer)
         (vector #'vector-writer)))))
+
+#||
+(user::featurep :clozure)
+(user::featurep :openmcl)
+(setf (find-class 'vector-stream) nil)
+(setf (find-class 'vector-input-stream) nil)
+(setf (find-class 'vector-output-stream) nil)
+(list   #+(not (or mcl clozure lispworks)) 1)
+(find-class 'fundamental-binary-output-stream)
+(find-class 'vector-input-stream)
+||#
