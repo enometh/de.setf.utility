@@ -108,28 +108,28 @@
    :application/xml
    :application/rdf+xml
    :binary
-   :binary-mime-type-p
+;;   :binary-mime-type-p
    :graphviz
    :graphviz-image
    :html
    :image
    :json
    :markdown
-   :mime-type
-   :mime-type-base-type
-   :mime-type-charset
-   :mime-type-expression
-   :mime-type-namestring
-   :mime-type-p
-   :mime-type-parameter
-   :mime-type-profile
-   :mime-type-quality
+;;   :mime-type
+;;   :mime-type-base-type
+;;   :mime-type-charset
+;;   :mime-type-expression
+;;   :mime-type-namestring
+;;   :mime-type-p
+;;   :mime-type-parameter
+;;   :mime-type-profile
+;;   :mime-type-quality
    :n3
    :octet-stream
    :plain
    :rdf
    :rdf+xml
-   :size-string
+;;   :size-string
    :svg
    :svg+xml
    :text
@@ -142,7 +142,7 @@
    :text/x-graphviz
    :text/xml
    :turtle
-   :unsupported-mime-type
+;;   :unsupported-mime-type
    :vnd.graphviz
    :x-graphviz
    :xhtml
@@ -150,3 +150,29 @@
    :xml
    ))
 
+(modpackage "MIME"
+  (:export
+   :de.setf.utility
+   :binary-mime-type-p
+   :mime-type
+   :mime-type-base-type
+   :mime-type-charset
+   :mime-type-expression
+   :mime-type-namestring
+   :mime-type-p
+   :mime-type-parameter
+   :mime-type-profile
+   :mime-type-quality
+   :size-string
+   :unsupported-mime-type))
+
+#|| ;madhu 250820
+Importing BINARY-MIME-TYPE-P to #<Package "MIME"> would conflict with symbol MIME:BINARY-MIME-TYPE-P .
+   [Condition of type CCL::IMPORT-CONFLICT-ERROR]
+(delete-package "MIME")
+(symbol-package (find-symbol "BINARY-MIME-TYPE-P" "MIME"))
+
+this happens because in ccl modpackage exports first (interning the symbol as
+an external symbol) before importing.
+;; have to import first before exporting.
+||#
