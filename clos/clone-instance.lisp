@@ -51,6 +51,24 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+#||;madhu 250821 recompilation on lw
+  Exporting these symbols from the DE.SETF.UTILITY package:
+DE.SETF.UTILITY::CHECK-CLONE-SLOTS DE.SETF.UTILITY::CLONE-ARRAY DE.SETF.UTILITY::CLONE-INSTANCE DE.SETF.UTILITY::CLONE-INSTANCE-AS DE.SETF.UTILITY::CLONE-P DE.SETF.UTILITY::COPY-INSTANCE-SLOTS DE.SETF.UTILITY::DEF-COPY-INSTANCE-SLOTS DE.SETF.UTILITY::DEF-INITIALIZE-CLONE DE.SETF.UTILITY::INITIALIZE-CLONE
+results in name conflicts with these packages:  DE.SETF.GRAPHICS.IMPLEMENTATION DE.SETF.UTILITY.IMPLEMENTATION.
+
+(symbol-package 'DE.SETF.UTILITY::INITIALIZE-CLONE)
+(eql (find-symbol "INITIALIZE-CLONE" :de.setf.utility.implementation)
+      'DE.SETF.UTILITY::INITIALIZE-CLONE)
+
+(loop for x in '("CHECK-CLONE-SLOTS" "CLONE-ARRAY" "CLONE-INSTANCE" "CLONE-INSTANCE-AS" "CLONE-P" "COPY-INSTANCE-SLOTS" "DEF-COPY-INSTANCE-SLOTS" "DEF-INITIALIZE-CLONE" "INITIALIZE-CLONE")
+      for s = (find-symbol x "DE.SETF.UTILITY.IMPLEMENTATION")
+      collect s)
+
+;;; on lispworks if compilation fails, evaluate the modpackage form,
+;;; and unintern any conflicting symbols.
+
+||#
+
 (modpackage :de.setf.utility
   (:export
    :check-clone-slots
