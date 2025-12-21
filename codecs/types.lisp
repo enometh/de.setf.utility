@@ -122,9 +122,8 @@
   (defconstant double-float-negative-infinity -1D++0)
   (defconstant single-float-positive-infinity +1F++0)
   (defconstant single-float-negative-infinity -1F++0)
-
-  (defconstant single-float-nan SYSTEM::*SINGLE-FLOAT-NAN*)
-  (defconstant double-float-nan SYSTEM::*DOUBLE-FLOAT-NAN*))
+  (defconstant single-float-nan #+lispworks8.1 (system::make-nan 2f0) #-lispworks8.1 SYSTEM::*SINGLE-FLOAT-NAN*)
+  (defconstant double-float-nan #+lispworks8.1 (system::make-nan 0d0) #-lispworks8.1 SYSTEM::*DOUBLE-FLOAT-NAN*))
 
 (defun nan-p (object)
   (or (eql object DOUBLE-FLOAT-NAN) (eql object SINGLE-FLOAT-NAN)))
